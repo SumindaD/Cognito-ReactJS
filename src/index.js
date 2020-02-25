@@ -185,6 +185,31 @@ class CognitoLogin extends React.Component {
         });
     }
 
+    forgotPassword(){
+        let username = this.state.username
+        Auth.forgotPassword(username)
+                    .then(data => {
+                        console.log(data)
+                        var verificationCode = prompt('Enter Verification sent to email: ' + username);
+                        var new_password = prompt('Enter new password');
+
+                        Auth.forgotPasswordSubmit(username, verificationCode, new_password)
+                        .then(data => {
+                            console.log(data)
+                            this.setState({errormessage: ''});
+                            this.setState({welcomeMessage: 'Confirmed ' + username + '! Please log in again.'})
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            this.setState({errormessage: err.message});
+                        });
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        this.setState({errormessage: err.message});
+                    });
+    }
+
     render() {
       return (
         <div>
@@ -208,6 +233,7 @@ class CognitoLogin extends React.Component {
                 />
 
                 {!this.state.signoutVisible ? <input type='submit' value='Login' /> : null}
+                {!this.state.signoutVisible ? <button onClick={this.forgotPassword.bind(this)}>Forgot Password</button> : null}
                 
                 {this.state.errormessage}
 
