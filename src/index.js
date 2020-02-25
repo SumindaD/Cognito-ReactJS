@@ -242,8 +242,8 @@ class CognitoLogin extends React.Component {
 
             {this.state.signoutVisible ? <button onClick={this.signOut.bind(this)}>Sign Out</button> : null}
 
-            {this.state.signoutVisible ? <button onClick={this.updatePhoneNumber.bind(this)}>Update Phoner Number</button> : null}
-            {this.state.signoutVisible ? <button onClick={this.verifyPhoneNumber.bind(this)}>Verify Phoner Number</button> : null}
+            {this.state.signoutVisible ? <button onClick={this.updatePhoneNumber.bind(this)}>Update Phone Number</button> : null}
+            {this.state.signoutVisible ? <button onClick={this.verifyPhoneNumber.bind(this)}>Verify Phone Number</button> : null}
         </div>
       );
     }
