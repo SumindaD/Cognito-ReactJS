@@ -210,6 +210,47 @@ class CognitoLogin extends React.Component {
                     });
     }
 
+    signUpUser(){
+        let username = this.state.username
+        let password = this.state.password
+        
+        Auth.signUp({
+            username,
+            password,
+            attributes: {
+                'email' : username,          // optional
+                'phone_number': '+94772625711'   // optional - E.164 number convention
+                // other custom attributes 
+            },
+            validationData: []  //optional
+            })
+            .then(data => {
+                console.log(data)
+                this.setState({errormessage: ''});
+                var verificationCode = prompt('Enter Verification sent to email: ' + username);
+
+                // After retrieving the confirmation code from the user
+                Auth.confirmSignUp(username, verificationCode, {
+                    // Optional. Force user confirmation irrespective of existing alias. By default set to True.
+                    forceAliasCreation: true    
+                }).then(data => {
+                    console.log(data)
+                    this.setState({errormessage: ''});
+                    this.setState({welcomeMessage: 'Confirmed ' + username + '! Please log in again.'})
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.setState({errormessage: err.message});
+                });
+            })
+            .catch(err => {
+                console.log(err)
+                this.setState({errormessage: err.message});
+            });
+    }
+
+    
+
     render() {
       return (
         <div>
@@ -234,6 +275,7 @@ class CognitoLogin extends React.Component {
 
                 {!this.state.signoutVisible ? <input type='submit' value='Login' /> : null}
                 {!this.state.signoutVisible ? <button onClick={this.forgotPassword.bind(this)}>Forgot Password</button> : null}
+                {!this.state.signoutVisible ? <button onClick={this.signUpUser.bind(this)}>Sign Up</button> : null}
                 
                 {this.state.errormessage}
 
