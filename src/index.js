@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Amplify, { Auth, Hub } from 'aws-amplify';
+import ReCAPTCHA from "react-google-recaptcha";
+
+const recaptchaRef = React.createRef();
 
 Amplify.configure({
     Auth: {
@@ -94,12 +97,13 @@ class CognitoLogin extends React.Component {
         event.preventDefault();
         let username = this.state.username
         let password = this.state.password
+        let validationData = {gcaptchaResponse: recaptchaRef.current.getValue()}
         // For advanced usage
         // You can pass an object which has the username, password and validationData which is sent to a PreAuthentication Lambda trigger
         Auth.signIn({
             username, // Required, the username
-            password // Optional, the password
-            // validationData, // Optional, a random key-value pair map which can contain any key and will be passed to your PreAuthentication Lambda trigger as-is. It can be used to implement additional validations around authentication
+            password, // Optional, the password
+            validationData, // Optional, a random key-value pair map which can contain any key and will be passed to your PreAuthentication Lambda trigger as-is. It can be used to implement additional validations around authentication
         }).then(user => 
             {
                 console.log(user)
@@ -271,6 +275,10 @@ class CognitoLogin extends React.Component {
 
             {this.state.signoutVisible ? <button onClick={this.updatePhoneNumber.bind(this)}>Update Phone Number</button> : null}
             {this.state.signoutVisible ? <button onClick={this.verifyPhoneNumber.bind(this)}>Verify Phone Number</button> : null}
+            <ReCAPTCHA
+                sitekey="6LeiqdsUAAAAAIwAd-bO-So5OlQQq3fAlKZgjLo8"
+                ref={recaptchaRef}
+            />
         </div>
       );
     }
