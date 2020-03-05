@@ -94,6 +94,7 @@ class CognitoLogin extends React.Component {
     }
 
     signInHandler = (event) => {
+        this.setState({errormessage: ''});
         event.preventDefault();
         let username = this.state.username
         let password = this.state.password
@@ -107,8 +108,29 @@ class CognitoLogin extends React.Component {
         }).then(user => 
             {
                 console.log(user)
-                this.setState({signoutVisible: true})
-                this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
+
+                if (user.challengeName === 'SMS_MFA' ||
+                    user.challengeName === 'SOFTWARE_TOKEN_MFA') {
+                    // You need to get the code from the UI inputs
+                    // and then trigger the following function with a button click
+                    var verificationCode = prompt('Enter Verification sent to phone number');
+                    // If MFA is enabled, sign-in should be confirmed with the confirmation code
+                    Auth.confirmSignIn(
+                        user,   // Return object from Auth.signIn()
+                        verificationCode,   // Confirmation code  
+                        user.challengeName // MFA Type e.g. SMS_MFA, SOFTWARE_TOKEN_MFA
+                    ).then(user => {
+                        console.log(user)
+                        this.setState({signoutVisible: true})
+                        this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
+                    });
+                }else{
+                    console.log(user)
+                    this.setState({signoutVisible: true})
+                    this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
+                }
+
+                
             })
         .catch(err => {
             console.log(err)
@@ -121,6 +143,7 @@ class CognitoLogin extends React.Component {
     }
 
     signOut () {
+        this.setState({errormessage: ''});
         Auth.signOut().then(data => {
             this.setState({signoutVisible: false})
             this.setState({welcomeMessage: ''})
@@ -129,6 +152,7 @@ class CognitoLogin extends React.Component {
     }
 
     updatePhoneNumber() {
+        this.setState({errormessage: ''});
         Auth.currentAuthenticatedUser({
             bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
         }).then(user => {
@@ -149,6 +173,7 @@ class CognitoLogin extends React.Component {
     }
 
     verifyPhoneNumber(){
+        this.setState({errormessage: ''});
         // To initiate the process of verifying the attribute like 'phone_number' or 'email'
         Auth.verifyCurrentUserAttribute('phone_number')
         .then(() => {
@@ -170,6 +195,7 @@ class CognitoLogin extends React.Component {
     }
 
     forgotPassword(){
+        this.setState({errormessage: ''});
         let username = this.state.username
         this.initiateForgotPasswordFlow(username)
     }
@@ -199,6 +225,7 @@ class CognitoLogin extends React.Component {
     }
 
     signUpUser(){
+        this.setState({errormessage: ''});
         let username = this.state.username
         let password = this.state.password
         
@@ -207,13 +234,13 @@ class CognitoLogin extends React.Component {
             password,
             attributes: {
                 'email' : username,          // optional
-                'phone_number': '+94713359107',   // optional - E.164 number convention
+                //'phone_number': '+14713359107',   // optional - E.164 number convention
                 'zoneinfo': '+0530',
-                'custom:firstName':'Dilshan',
-                'custom:lastName' :'Wijesinghe',
+                'custom:firstName':'FirstName',
+                'custom:lastName' :'LastName',
                 'custom:password': password,
                 'custom:staySignIn': 'true',
-                'custom:country': 'Sri Lanka'
+                'custom:country': 'Country'
                 // other custom attributes 
             },
             validationData: []  //optional
