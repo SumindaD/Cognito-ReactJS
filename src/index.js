@@ -9,7 +9,7 @@ Amplify.configure({
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'us-east-1:546ca6de-b0fb-4cb7-9cc7-812ee8a4b240',
+        identityPoolId: 'us-east-1:4b1b61b3-2c65-40ce-82b8-6abb76b386f4',
         
         // REQUIRED - Amazon Cognito Region
         region: 'us-east-1',
@@ -19,10 +19,10 @@ Amplify.configure({
         identityPoolRegion: 'us-east-1',
 
         // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'us-east-1_2j5Dbi1bZ',
+        userPoolId: 'us-east-1_3vvMfwa70',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '4gjp9qqmejjt55ggk1g94bufhj',
+        userPoolWebClientId: '3kb92oaere6m3pvms08d7re9k5',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: false,
@@ -211,7 +211,7 @@ class CognitoLogin extends React.Component {
                 'zoneinfo': '+0530',
                 'custom:firstName':'Dilshan',
                 'custom:lastName' :'Wijesinghe',
-                'custom:password': 'DilshanAuxenta',
+                'custom:password': password,
                 'custom:staySignIn': 'true',
                 'custom:country': 'Sri Lanka'
                 // other custom attributes 
