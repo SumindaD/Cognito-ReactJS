@@ -6,7 +6,7 @@ Amplify.configure({
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'us-east-1:7bc8d683-5e87-4bea-ac5f-1b6ca1cfba7b',
+        identityPoolId: 'us-east-1:546ca6de-b0fb-4cb7-9cc7-812ee8a4b240',
         
         // REQUIRED - Amazon Cognito Region
         region: 'us-east-1',
@@ -16,10 +16,10 @@ Amplify.configure({
         identityPoolRegion: 'us-east-1',
 
         // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'us-east-1_1z9UKSFCG',
+        userPoolId: 'us-east-1_2j5Dbi1bZ',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '1s0f1a8c3n9ff5b6dp6suqlin8',
+        userPoolWebClientId: '4gjp9qqmejjt55ggk1g94bufhj',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: false,
@@ -111,27 +111,7 @@ class CognitoLogin extends React.Component {
             this.setState({errormessage: err.message});
 
             if (err.code === 'PasswordResetRequiredException') {
-                Auth.forgotPassword(username)
-                    .then(data => {
-                        console.log(data)
-                        var verificationCode = prompt('Enter Verification sent to email: ' + username);
-                        var new_password = prompt('Enter new password');
-
-                        Auth.forgotPasswordSubmit(username, verificationCode, new_password)
-                        .then(data => {
-                            console.log(data)
-                            this.setState({errormessage: ''});
-                            this.setState({welcomeMessage: 'Confirmed ' + username + '! Please log in again.'})
-                        })
-                        .catch(err => {
-                            console.log(err)
-                            this.setState({errormessage: err.message});
-                        });
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        this.setState({errormessage: err.message});
-                    });
+                this.initiateForgotPasswordFlow(username)
             }
         });
     }
@@ -187,27 +167,31 @@ class CognitoLogin extends React.Component {
 
     forgotPassword(){
         let username = this.state.username
-        Auth.forgotPassword(username)
-                    .then(data => {
-                        console.log(data)
-                        var verificationCode = prompt('Enter Verification sent to email: ' + username);
-                        var new_password = prompt('Enter new password');
+        this.initiateForgotPasswordFlow(username)
+    }
 
-                        Auth.forgotPasswordSubmit(username, verificationCode, new_password)
-                        .then(data => {
-                            console.log(data)
-                            this.setState({errormessage: ''});
-                            this.setState({welcomeMessage: 'Confirmed ' + username + '! Please log in again.'})
-                        })
-                        .catch(err => {
-                            console.log(err)
-                            this.setState({errormessage: err.message});
-                        });
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        this.setState({errormessage: err.message});
-                    });
+    initiateForgotPasswordFlow(username){
+        Auth.forgotPassword(username)
+        .then(data => {
+            console.log(data)
+            var verificationCode = prompt('Enter Verification sent to email: ' + username);
+            var new_password = prompt('Enter new password');
+
+            Auth.forgotPasswordSubmit(username, verificationCode, new_password)
+            .then(data => {
+                console.log(data)
+                this.setState({errormessage: ''});
+                this.setState({welcomeMessage: 'Confirmed ' + username + '! Please log in again.'})
+            })
+            .catch(err => {
+                console.log(err)
+                this.setState({errormessage: err.message});
+            });
+        })
+        .catch(err => {
+            console.log(err)
+            this.setState({errormessage: err.message});
+        });
     }
 
     signUpUser(){
@@ -219,7 +203,13 @@ class CognitoLogin extends React.Component {
             password,
             attributes: {
                 'email' : username,          // optional
-                'phone_number': '+94772625711'   // optional - E.164 number convention
+                'phone_number': '+94713359107',   // optional - E.164 number convention
+                'zoneinfo': '+0530',
+                'custom:firstName':'Dilshan',
+                'custom:lastName' :'Wijesinghe',
+                'custom:password': 'DilshanAuxenta',
+                'custom:staySignIn': 'true',
+                'custom:country': 'Sri Lanka'
                 // other custom attributes 
             },
             validationData: []  //optional
@@ -274,14 +264,15 @@ class CognitoLogin extends React.Component {
                 />
 
                 {!this.state.signoutVisible ? <input type='submit' value='Login' /> : null}
-                {!this.state.signoutVisible ? <button onClick={this.forgotPassword.bind(this)}>Forgot Password</button> : null}
-                {!this.state.signoutVisible ? <button onClick={this.signUpUser.bind(this)}>Sign Up</button> : null}
+                
                 
                 {this.state.errormessage}
 
                 {this.state.welcomeMessage}
             </form>
 
+            {!this.state.signoutVisible ? <button onClick={this.forgotPassword.bind(this)}>Forgot Password</button> : null}
+            {!this.state.signoutVisible ? <button onClick={this.signUpUser.bind(this)}>Sign Up</button> : null}
             {this.state.signoutVisible ? <button onClick={this.signOut.bind(this)}>Sign Out</button> : null}
 
             {this.state.signoutVisible ? <button onClick={this.updatePhoneNumber.bind(this)}>Update Phone Number</button> : null}

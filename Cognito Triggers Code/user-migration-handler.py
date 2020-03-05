@@ -17,7 +17,7 @@ def lambda_handler(event, context):
             event['response']['userAttributes'] = {
                 "email": event['userName'],
                 "email_verified": "true"
-            };
+            }
         
             event['response']['finalUserStatus'] = "RESET_REQUIRED"
             event['response']['messageAction'] = "SUPPRESS"
