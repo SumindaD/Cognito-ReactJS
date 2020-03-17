@@ -9,7 +9,7 @@ Amplify.configure({
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'us-east-1:e65e06ca-a8e4-48ee-9267-154d6ff39977',
+        identityPoolId: 'us-east-1:feca04cb-2dad-48c1-a310-71550cd3b32e',
         
         // REQUIRED - Amazon Cognito Region
         region: 'us-east-1',
@@ -19,10 +19,10 @@ Amplify.configure({
         identityPoolRegion: 'us-east-1',
 
         // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'us-east-1_JBFfOl3QS',
+        userPoolId: 'us-east-1_JP1xcL4Sl',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '5u93sga8rtken3509u9u4morek',
+        userPoolWebClientId: '5k8mtho09jbqv9814mt1dh266',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: false,
@@ -141,6 +141,16 @@ class CognitoLogin extends React.Component {
 
             if (err.code === 'PasswordResetRequiredException') {
                 this.initiateForgotPasswordFlow(username)
+            }
+            else if(err.code == 'UserNotConfirmedException'){
+                console.log('Sending sign up code')
+                Auth.resendSignUp(username).then(() => {
+                    var verificationCode = prompt('Enter Verification sent to email: ' + username);
+                    this.confirmUserSignUpWithCode(username, verificationCode)
+
+                }).catch(e => {
+                    console.log(e);
+                });
             }
         });
     }
@@ -283,19 +293,7 @@ class CognitoLogin extends React.Component {
                 this.setState({errormessage: ''});
                 var verificationCode = prompt('Enter Verification sent to email: ' + username);
 
-                // After retrieving the confirmation code from the user
-                Auth.confirmSignUp(username, verificationCode, {
-                    // Optional. Force user confirmation irrespective of existing alias. By default set to True.
-                    forceAliasCreation: true    
-                }).then(data => {
-                    console.log(data)
-                    this.setState({errormessage: ''});
-                    this.setState({welcomeMessage: 'Confirmed ' + username + '! Please log in again.'})
-                })
-                .catch(err => {
-                    console.log(err)
-                    this.setState({errormessage: err.message});
-                });
+                this.confirmUserSignUpWithCode(username, verificationCode)
             })
             .catch(err => {
                 console.log(err)
@@ -303,7 +301,21 @@ class CognitoLogin extends React.Component {
             });
     }
 
-    
+    confirmUserSignUpWithCode(username, verificationCode){
+        // After retrieving the confirmation code from the user
+        Auth.confirmSignUp(username, verificationCode, {
+            // Optional. Force user confirmation irrespective of existing alias. By default set to True.
+            forceAliasCreation: true    
+        }).then(data => {
+            console.log(data)
+            this.setState({errormessage: ''});
+            this.setState({welcomeMessage: 'Confirmed ' + username + '! Please log in again.'})
+        })
+        .catch(err => {
+            console.log(err)
+            this.setState({errormessage: err.message});
+        });
+    }
 
     render() {
       return (
