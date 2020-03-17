@@ -89,6 +89,9 @@ class CognitoLogin extends React.Component {
             console.log(user)
             this.setState({signoutVisible: true})
             this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
+
+            // Get ID Token JWT
+            Auth.currentSession().then(data => console.log(data.getIdToken().jwtToken));
         })
         .catch(err => console.log(err));
     }
