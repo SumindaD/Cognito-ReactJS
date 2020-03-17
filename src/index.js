@@ -172,6 +172,36 @@ class CognitoLogin extends React.Component {
         
     }
 
+    enableMFA() {
+        this.setState({errormessage: ''});
+        Auth.currentAuthenticatedUser({
+            bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+        }).then(user => {
+            console.log(user)
+
+            Auth.setPreferredMFA(user, 'SMS').then(result => {
+                console.log(result)
+                this.setState({errormessage: result});
+            })
+        })
+        .catch(err => console.log(err));
+    }
+
+    disableMFA() {
+        this.setState({errormessage: ''});
+        Auth.currentAuthenticatedUser({
+            bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+        }).then(user => {
+            console.log(user)
+
+            Auth.setPreferredMFA(user, 'NOMFA').then(result => {
+                console.log(result)
+                this.setState({errormessage: result});
+            })
+        })
+        .catch(err => console.log(err));
+    }
+
     verifyPhoneNumber(){
         this.setState({errormessage: ''});
         // To initiate the process of verifying the attribute like 'phone_number' or 'email'
@@ -308,6 +338,8 @@ class CognitoLogin extends React.Component {
 
             {this.state.signoutVisible ? <button onClick={this.updatePhoneNumber.bind(this)}>Update Phone Number</button> : null}
             {this.state.signoutVisible ? <button onClick={this.verifyPhoneNumber.bind(this)}>Verify Phone Number</button> : null}
+            {this.state.signoutVisible ? <button onClick={this.enableMFA.bind(this)}>Enable MFA</button> : null}
+            {this.state.signoutVisible ? <button onClick={this.disableMFA.bind(this)}>Disable MFA</button> : null}
             <ReCAPTCHA
                 sitekey="6LeiqdsUAAAAAIwAd-bO-So5OlQQq3fAlKZgjLo8"
                 ref={recaptchaRef}
