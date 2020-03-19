@@ -127,7 +127,19 @@ class CognitoLogin extends React.Component {
                         this.setState({signoutVisible: true})
                         this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
                     });
-                }else{
+                }else if(user.challengeName === 'NEW_PASSWORD_REQUIRED'){
+                    var newPassword = prompt('Enter new password');
+
+                    Auth.completeNewPassword(user, newPassword).then(user => {
+                        console.log(user)
+                        this.setState({signoutVisible: true})
+                        this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
+                    }).catch(err => {
+                        console.log(err)
+                        this.setState({errormessage: err.message});
+                    })
+                }
+                else{
                     console.log(user)
                     this.setState({signoutVisible: true})
                     this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
@@ -289,10 +301,16 @@ class CognitoLogin extends React.Component {
             })
             .then(data => {
                 console.log(data)
-                this.setState({errormessage: ''});
-                var verificationCode = prompt('Enter Verification sent to email: ' + username);
 
-                this.confirmUserSignUpWithCode(username, verificationCode)
+                if (data.userConfirmed){
+                    this.setState({errormessage: ''});
+                    this.setState({welcomeMessage: 'Created Account for ' + username + '! Please log in again.'})
+                }else{
+                    this.setState({errormessage: ''});
+                    var verificationCode = prompt('Enter Verification sent to email: ' + username);
+
+                    this.confirmUserSignUpWithCode(username, verificationCode)
+                }
             })
             .catch(err => {
                 console.log(err)
