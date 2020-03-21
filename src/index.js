@@ -227,6 +227,27 @@ class CognitoLogin extends React.Component {
         .catch(err => console.log(err));
     }
 
+    verifyEmail(){
+        this.setState({errormessage: ''});
+        // To initiate the process of verifying the attribute like 'phone_number' or 'email'
+        Auth.verifyCurrentUserAttribute('email')
+        .then(() => {
+            var verificationCode = prompt('Enter Verification sent to email');
+
+            // To verify attribute with the code
+            Auth.verifyCurrentUserAttributeSubmit('email', verificationCode)
+            .then(() => {
+                this.setState({welcomeMessage: ''})
+                this.setState({errormessage: 'email verified'});
+            }).catch(e => {
+                this.setState({errormessage: 'Verification failed'});
+            });
+        }).catch((err) => {
+            console.log('failed with error', err);
+            this.setState({errormessage: err.message});
+        });
+    }
+
     verifyPhoneNumber(){
         this.setState({errormessage: ''});
         // To initiate the process of verifying the attribute like 'phone_number' or 'email'
@@ -370,6 +391,7 @@ class CognitoLogin extends React.Component {
 
             {this.state.signoutVisible ? <button onClick={this.updatePhoneNumber.bind(this)}>Update Phone Number</button> : null}
             {this.state.signoutVisible ? <button onClick={this.verifyPhoneNumber.bind(this)}>Verify Phone Number</button> : null}
+            {this.state.signoutVisible ? <button onClick={this.verifyEmail.bind(this)}>Verify Email</button> : null}
             {this.state.signoutVisible ? <button onClick={this.enableMFA.bind(this)}>Enable MFA</button> : null}
             {this.state.signoutVisible ? <button onClick={this.disableMFA.bind(this)}>Disable MFA</button> : null}
             <ReCAPTCHA
