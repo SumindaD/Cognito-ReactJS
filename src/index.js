@@ -232,16 +232,7 @@ class CognitoLogin extends React.Component {
         // To initiate the process of verifying the attribute like 'phone_number' or 'email'
         Auth.verifyCurrentUserAttribute('email')
         .then(() => {
-            var verificationCode = prompt('Enter Verification sent to email');
-
-            // To verify attribute with the code
-            Auth.verifyCurrentUserAttributeSubmit('email', verificationCode)
-            .then(() => {
-                this.setState({welcomeMessage: ''})
-                this.setState({errormessage: 'email verified'});
-            }).catch(e => {
-                this.setState({errormessage: 'Verification failed'});
-            });
+            this.verifyEmailWithCode()
         }).catch((err) => {
             console.log('failed with error', err);
             this.setState({errormessage: err.message});
@@ -355,6 +346,40 @@ class CognitoLogin extends React.Component {
         });
     }
 
+    changeEmail(){
+        Auth.currentAuthenticatedUser({
+            bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+        }).then(user => {
+            console.log(user)
+
+            var newEmail = prompt('Enter new email: ');
+
+            Auth.updateUserAttributes(user, {
+                'email': newEmail
+            }).then(data => {
+                this.verifyEmailWithCode()
+            })
+            .catch(err => {
+                console.log(err)
+                this.setState({errormessage: err.message});
+            });
+        })
+        .catch(err => console.log(err));
+    }
+
+    verifyEmailWithCode(){
+        var verificationCode = prompt('Enter Verification sent to email');
+
+        // To verify attribute with the code
+        Auth.verifyCurrentUserAttributeSubmit('email', verificationCode)
+        .then(() => {
+            this.setState({welcomeMessage: ''})
+            this.setState({errormessage: 'email verified'});
+        }).catch(e => {
+            this.setState({errormessage: 'Verification failed'});
+        });
+    }
+
     render() {
       return (
         <div>
@@ -394,6 +419,7 @@ class CognitoLogin extends React.Component {
             {this.state.signoutVisible ? <button onClick={this.verifyEmail.bind(this)}>Verify Email</button> : null}
             {this.state.signoutVisible ? <button onClick={this.enableMFA.bind(this)}>Enable MFA</button> : null}
             {this.state.signoutVisible ? <button onClick={this.disableMFA.bind(this)}>Disable MFA</button> : null}
+            {this.state.signoutVisible ? <button onClick={this.changeEmail.bind(this)}>Change Email</button> : null}
             <ReCAPTCHA
                 sitekey="6LeiqdsUAAAAAIwAd-bO-So5OlQQq3fAlKZgjLo8"
                 ref={recaptchaRef}
