@@ -9,7 +9,7 @@ Amplify.configure({
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'us-east-1:d6416a84-715c-412f-bdb2-e4a146a88be2',
+        identityPoolId: 'us-east-1:6a990ff7-fdea-4660-88c5-db80fccf2921',
         
         // REQUIRED - Amazon Cognito Region
         region: 'us-east-1',
@@ -19,10 +19,10 @@ Amplify.configure({
         identityPoolRegion: 'us-east-1',
 
         // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'us-east-1_d28fcHloU',
+        userPoolId: 'us-east-1_d8vqHgFi9',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: 'vl8m571slq034ou9u6jvo2f10',
+        userPoolWebClientId: '2mj0dd46iq1495tvv70k8ouul0',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: false,
@@ -197,6 +197,27 @@ class CognitoLogin extends React.Component {
         
     }
 
+    UpdateEmail() {
+        this.setState({errormessage: ''});
+        Auth.currentAuthenticatedUser({
+            bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+        }).then(user => {
+            console.log(user)
+            
+            var email = prompt('Enter new email');
+            const result = Auth.updateUserAttributes(user, {
+                'email': email
+            }).then(result => {
+                console.log(result)
+                this.setState({errormessage: result});
+            })
+
+            
+        })
+        .catch(err => console.log(err));
+        
+    }
+
     enableMFA() {
         this.setState({errormessage: ''});
         Auth.currentAuthenticatedUser({
@@ -302,7 +323,7 @@ class CognitoLogin extends React.Component {
             attributes: {
                 'email' : username,          // optional
                 //'phone_number': '+14713359107',   // optional - E.164 number convention
-                'zoneinfo': '+0530',
+                'custom:timezone': '+0530',
                 'custom:firstName':'FirstName',
                 'custom:lastName' :'LastName',
                 'custom:staySignIn': 'true',
@@ -416,6 +437,7 @@ class CognitoLogin extends React.Component {
 
             {this.state.signoutVisible ? <button onClick={this.updatePhoneNumber.bind(this)}>Update Phone Number</button> : null}
             {this.state.signoutVisible ? <button onClick={this.verifyPhoneNumber.bind(this)}>Verify Phone Number</button> : null}
+            {this.state.signoutVisible ? <button onClick={this.UpdateEmail.bind(this)}>Update Email</button> : null}
             {this.state.signoutVisible ? <button onClick={this.verifyEmail.bind(this)}>Verify Email</button> : null}
             {this.state.signoutVisible ? <button onClick={this.enableMFA.bind(this)}>Enable MFA</button> : null}
             {this.state.signoutVisible ? <button onClick={this.disableMFA.bind(this)}>Disable MFA</button> : null}
