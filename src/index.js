@@ -325,9 +325,7 @@ class CognitoLogin extends React.Component {
                 //'phone_number': '+14713359107',   // optional - E.164 number convention
                 'custom:timezone': '+0530',
                 'custom:firstName':'FirstName',
-                'custom:lastName' :'LastName',
-                'custom:staySignIn': 'true',
-                'custom:country': 'Country'
+                'custom:staySignIn': 'true'
                 // other custom attributes 
             },
             validationData: []  //optional
