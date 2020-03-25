@@ -9,7 +9,7 @@ Amplify.configure({
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'us-east-1:b660d3ee-0672-4b26-a7c3-6b65ccbc4360',
+        identityPoolId: 'us-east-1:98bec1d0-7d03-40b2-a24c-fd565089492f',
         
         // REQUIRED - Amazon Cognito Region
         region: 'us-east-1',
@@ -19,10 +19,10 @@ Amplify.configure({
         identityPoolRegion: 'us-east-1',
 
         // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'us-east-1_ToNFAMmT4',
+        userPoolId: 'us-east-1_wLGISmtMu',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '18oaqa3cg4l0m1bfhjpv1dghdk',
+        userPoolWebClientId: '7e4iv0m5u0kv9phngqpil8558t',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: false,
@@ -399,6 +399,17 @@ class CognitoLogin extends React.Component {
         });
     }
 
+    changePassword(){
+        Auth.currentAuthenticatedUser({
+            bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+        }).then(user => {
+            var newPassword = prompt('Enter new password');
+
+            Auth.changePassword(user, this.state.password, newPassword).then(data => this.setState({welcomeMessage: data})).catch(err => this.setState({errormessage: err.message}));
+        })
+        .catch(err => console.log(err));
+    }
+
     render() {
       return (
         <div>
@@ -440,6 +451,7 @@ class CognitoLogin extends React.Component {
             {this.state.signoutVisible ? <button onClick={this.enableMFA.bind(this)}>Enable MFA</button> : null}
             {this.state.signoutVisible ? <button onClick={this.disableMFA.bind(this)}>Disable MFA</button> : null}
             {this.state.signoutVisible ? <button onClick={this.changeEmail.bind(this)}>Change Email</button> : null}
+            {this.state.signoutVisible ? <button onClick={this.changePassword.bind(this)}>Change Password</button> : null}
             <ReCAPTCHA
                 sitekey="6LeiqdsUAAAAAIwAd-bO-So5OlQQq3fAlKZgjLo8"
                 ref={recaptchaRef}
