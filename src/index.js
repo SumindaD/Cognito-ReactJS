@@ -9,7 +9,7 @@ Amplify.configure({
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'us-east-1:98bec1d0-7d03-40b2-a24c-fd565089492f',
+        identityPoolId: 'us-east-1:b660d3ee-0672-4b26-a7c3-6b65ccbc4360',
         
         // REQUIRED - Amazon Cognito Region
         region: 'us-east-1',
@@ -19,10 +19,10 @@ Amplify.configure({
         identityPoolRegion: 'us-east-1',
 
         // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'us-east-1_wLGISmtMu',
+        userPoolId: 'us-east-1_ToNFAMmT4',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '7e4iv0m5u0kv9phngqpil8558t',
+        userPoolWebClientId: '18oaqa3cg4l0m1bfhjpv1dghdk',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: false,
@@ -102,6 +102,11 @@ class CognitoLogin extends React.Component {
         let username = this.state.username
         let password = this.state.password
         let validationData = {gcaptchaResponse: recaptchaRef.current.getValue()}
+        
+        this.signIn(username, password, validationData);
+    }
+
+    signIn(username, password, validationData){
         // For advanced usage
         // You can pass an object which has the username, password and validationData which is sent to a PreAuthentication Lambda trigger
         Auth.signIn({
@@ -316,6 +321,7 @@ class CognitoLogin extends React.Component {
         this.setState({errormessage: ''});
         let username = this.state.username
         let password = this.state.password
+        let validationData = {gcaptchaResponse: ''}
         
         Auth.signUp({
             username,
@@ -334,8 +340,7 @@ class CognitoLogin extends React.Component {
                 console.log(data)
 
                 if (data.userConfirmed){
-                    this.setState({errormessage: ''});
-                    this.setState({welcomeMessage: 'Created Account for ' + username + '! Please log in again.'})
+                    this.signIn(username, password, validationData);
                 }else{
                     this.setState({errormessage: ''});
                     var verificationCode = prompt('Enter Verification sent to email: ' + username);
