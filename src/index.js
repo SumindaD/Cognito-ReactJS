@@ -102,7 +102,7 @@ class CognitoLogin extends React.Component {
         event.preventDefault();
         let username = this.state.username
         let password = this.state.password
-        let validationData = {gcaptchaResponse: recaptchaRef.current.getValue()}
+        let validationData = {gcaptchaResponse: recaptchaRef.current.getValue(), staySignIn: 'true'}
         
         this.signIn(username, password, validationData);
     }
@@ -333,7 +333,7 @@ class CognitoLogin extends React.Component {
         this.setState({errormessage: ''});
         let username = this.state.username
         let password = this.state.password
-        let validationData = {gcaptchaResponse: ''}
+        let validationData = {gcaptchaResponse: '', staySignIn: 'false'}
         
         Auth.signUp({
             username,
