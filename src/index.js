@@ -88,6 +88,7 @@ class CognitoLogin extends React.Component {
         }).then(user => {
             console.log(user)
             this.setState({signoutVisible: true})
+            this.logUserAttributes()
             this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
 
             // Get ID Token JWT
@@ -130,7 +131,11 @@ class CognitoLogin extends React.Component {
                     ).then(user => {
                         console.log(user)
                         this.setState({signoutVisible: true})
+                        this.logUserAttributes()
                         this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
+                    }).catch(err => {
+                        console.log(err)
+                        this.setState({errormessage: err.message});
                     });
                 }else if(user.challengeName === 'NEW_PASSWORD_REQUIRED'){
                     var newPassword = prompt('Enter new password');
@@ -138,6 +143,7 @@ class CognitoLogin extends React.Component {
                     Auth.completeNewPassword(user, newPassword).then(user => {
                         console.log(user)
                         this.setState({signoutVisible: true})
+                        this.logUserAttributes()
                         this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
                     }).catch(err => {
                         console.log(err)
@@ -147,6 +153,7 @@ class CognitoLogin extends React.Component {
                 else{
                     console.log(user)
                     this.setState({signoutVisible: true})
+                    this.logUserAttributes()
                     this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
                 }
 
@@ -226,16 +233,21 @@ class CognitoLogin extends React.Component {
     enableMFA() {
         this.setState({errormessage: ''});
         Auth.currentAuthenticatedUser({
-            bypassCache: false  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+            bypassCache: true  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
         }).then(user => {
             console.log(user)
 
-            Auth.setPreferredMFA(user, 'SMS').then(result => {
-                console.log(result)
-                this.setState({errormessage: result});
-            })
+            if (user.attributes.phone_number_verified == 'true'){
+                Auth.setPreferredMFA(user, 'SMS').then(result => {
+                    console.log(result)
+                    this.setState({errormessage: result});
+                })
+            }else{
+                this.setState({errormessage: 'Verify Phone Number First!'});
+            }
         })
         .catch(err => console.log(err));
+
     }
 
     disableMFA() {
@@ -411,6 +423,29 @@ class CognitoLogin extends React.Component {
             var newPassword = prompt('Enter new password');
 
             Auth.changePassword(user, this.state.password, newPassword).then(data => this.setState({welcomeMessage: data})).catch(err => this.setState({errormessage: err.message}));
+        })
+        .catch(err => console.log(err));
+    }
+
+    logUserAttributes(){
+        Auth.currentAuthenticatedUser({
+            bypassCache: true  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+        }).then(user => {
+            // Will retrieve the current mfa type from cache
+            Auth.getPreferredMFA(user,{
+                // Optional, by default is false. 
+                // If set to true, it will get the MFA type from server side instead of from local cache.
+                bypassCache: true 
+            }).then((data) => {
+                if (data == 'NOMFA'){
+                    console.log('MFA DISABLED')
+                }else if(data == 'SMS_MFA'){
+                    console.log('MFA ENABLED')
+                }
+            })
+
+            console.log(user.attributes.phone_number);
+            console.log(user.attributes.phone_number_verified);
         })
         .catch(err => console.log(err));
     }
