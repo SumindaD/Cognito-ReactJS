@@ -237,7 +237,7 @@ class CognitoLogin extends React.Component {
         }).then(user => {
             console.log(user)
 
-            if (user.attributes.phone_number_verified == 'true'){
+            if (user.attributes.phone_number_verified == true){
                 Auth.setPreferredMFA(user, 'SMS').then(result => {
                     console.log(result)
                     this.setState({errormessage: result});
