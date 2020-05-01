@@ -9,7 +9,7 @@ Amplify.configure({
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'us-east-1:b660d3ee-0672-4b26-a7c3-6b65ccbc4360',
+        identityPoolId: 'us-east-1:5e337b5c-bc7b-4dbe-b114-f47c4694cb9c',
         
         // REQUIRED - Amazon Cognito Region
         region: 'us-east-1',
@@ -19,10 +19,10 @@ Amplify.configure({
         identityPoolRegion: 'us-east-1',
 
         // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'us-east-1_ToNFAMmT4',
+        userPoolId: 'us-east-1_2u3BtLISo',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '18oaqa3cg4l0m1bfhjpv1dghdk',
+        userPoolWebClientId: '25e68hnef0ljkh0kled3nhle2c',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: false,
@@ -102,7 +102,7 @@ class CognitoLogin extends React.Component {
         event.preventDefault();
         let username = this.state.username
         let password = this.state.password
-        let validationData = {gcaptchaResponse: recaptchaRef.current.getValue(), staySignIn: 'true'}
+        let validationData = {gcaptchaResponse: recaptchaRef.current.getValue(), staySignIn: 'true', gcaptchaVisible: "true"}
         
         this.signIn(username, password, validationData);
     }
@@ -120,31 +120,20 @@ class CognitoLogin extends React.Component {
 
                 if (user.challengeName === 'SMS_MFA' ||
                     user.challengeName === 'SOFTWARE_TOKEN_MFA') {
-                    // You need to get the code from the UI inputs
-                    // and then trigger the following function with a button click
-                    var verificationCode = prompt('Enter Verification sent to phone number');
-                    // If MFA is enabled, sign-in should be confirmed with the confirmation code
-                    Auth.confirmSignIn(
-                        user,   // Return object from Auth.signIn()
-                        verificationCode,   // Confirmation code  
-                        user.challengeName // MFA Type e.g. SMS_MFA, SOFTWARE_TOKEN_MFA
-                    ).then(user => {
-                        console.log(user)
-                        this.setState({signoutVisible: true})
-                        this.logUserAttributes()
-                        this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
-                    }).catch(err => {
-                        console.log(err)
-                        this.setState({errormessage: err.message});
-                    });
+                    this.processMFA(user)
                 }else if(user.challengeName === 'NEW_PASSWORD_REQUIRED'){
                     var newPassword = prompt('Enter new password');
 
                     Auth.completeNewPassword(user, newPassword).then(user => {
-                        console.log(user)
-                        this.setState({signoutVisible: true})
-                        this.logUserAttributes()
-                        this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
+                        if (user.challengeName === 'SMS_MFA' || user.challengeName === 'SOFTWARE_TOKEN_MFA') {
+                            this.processMFA(user)
+                        }else{
+                            console.log(user)
+                            this.setState({signoutVisible: true})
+                            this.logUserAttributes()
+                            this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
+                        }
+                        
                     }).catch(err => {
                         console.log(err)
                         this.setState({errormessage: err.message});
@@ -176,6 +165,26 @@ class CognitoLogin extends React.Component {
                     console.log(e);
                 });
             }
+        });
+    }
+
+    processMFA(user){
+        // You need to get the code from the UI inputs
+        // and then trigger the following function with a button click
+        var verificationCode = prompt('Enter Verification sent to phone number');
+        // If MFA is enabled, sign-in should be confirmed with the confirmation code
+        Auth.confirmSignIn(
+            user,   // Return object from Auth.signIn()
+            verificationCode,   // Confirmation code  
+            user.challengeName // MFA Type e.g. SMS_MFA, SOFTWARE_TOKEN_MFA
+        ).then(user => {
+            console.log(user)
+            this.setState({signoutVisible: true})
+            this.logUserAttributes()
+            this.setState({welcomeMessage: 'Welcome ' + user.username + '!'})
+        }).catch(err => {
+            console.log(err)
+            this.setState({errormessage: err.message});
         });
     }
 
