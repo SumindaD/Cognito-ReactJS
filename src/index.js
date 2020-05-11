@@ -9,7 +9,7 @@ Amplify.configure({
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'us-east-1:5e337b5c-bc7b-4dbe-b114-f47c4694cb9c',
+        identityPoolId: 'us-east-1:8e8295ab-9c5f-43d0-992a-b44a9d8a9a0d',
         
         // REQUIRED - Amazon Cognito Region
         region: 'us-east-1',
@@ -19,10 +19,10 @@ Amplify.configure({
         identityPoolRegion: 'us-east-1',
 
         // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'us-east-1_2u3BtLISo',
+        userPoolId: 'us-east-1_AVByQKupq',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '25e68hnef0ljkh0kled3nhle2c',
+        userPoolWebClientId: '5fm5nojebteprh52ub1d1aam3l',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: false,
