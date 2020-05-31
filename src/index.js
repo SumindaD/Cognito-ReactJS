@@ -9,7 +9,7 @@ Amplify.configure({
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'us-east-1:8e8295ab-9c5f-43d0-992a-b44a9d8a9a0d',
+        identityPoolId: 'us-east-1:0a15a40c-d4ed-4b10-8ca0-908459290f01',
         
         // REQUIRED - Amazon Cognito Region
         region: 'us-east-1',
@@ -19,10 +19,10 @@ Amplify.configure({
         identityPoolRegion: 'us-east-1',
 
         // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'us-east-1_AVByQKupq',
+        userPoolId: 'us-east-1_xLy7znUKC',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '5fm5nojebteprh52ub1d1aam3l',
+        userPoolWebClientId: '28fqk122l6dod9c1boq1utsps6',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: false,
@@ -460,6 +460,13 @@ class CognitoLogin extends React.Component {
         .catch(err => console.log(err));
     }
 
+    loginAsGuestUser(){
+        Auth.currentCredentials().then(anonymousUser => {
+            console.log(anonymousUser);
+        });
+        
+    }
+
     render() {
       return (
         <div>
@@ -492,6 +499,7 @@ class CognitoLogin extends React.Component {
 
             {!this.state.signoutVisible ? <button onClick={this.forgotPassword.bind(this)}>Forgot Password</button> : null}
             {!this.state.signoutVisible ? <button onClick={this.signUpUser.bind(this)}>Sign Up</button> : null}
+            {!this.state.signoutVisible ? <button onClick={this.loginAsGuestUser.bind(this)}>Login As Guest</button> : null}
             {this.state.signoutVisible ? <button onClick={this.signOut.bind(this)}>Sign Out</button> : null}
 
             {this.state.signoutVisible ? <button onClick={this.updatePhoneNumber.bind(this)}>Update Phone Number</button> : null}
