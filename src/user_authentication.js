@@ -9,7 +9,7 @@ Amplify.configure({
     Auth: {
 
         // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'us-east-1:0a15a40c-d4ed-4b10-8ca0-908459290f01',
+        identityPoolId: 'us-east-1:8ed96ef1-7bf5-44b5-9f9b-623b245d371c',
         
         // REQUIRED - Amazon Cognito Region
         region: 'us-east-1',
@@ -19,10 +19,10 @@ Amplify.configure({
         identityPoolRegion: 'us-east-1',
 
         // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'us-east-1_xLy7znUKC',
+        userPoolId: 'us-east-1_hdA29vmF5',
 
         // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '28fqk122l6dod9c1boq1utsps6',
+        userPoolWebClientId: '5bsm958ggrhl7fu4dhmn8n39pj',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: false,
@@ -421,6 +421,11 @@ export default class CognitoLogin extends React.Component {
         .then(() => {
             this.setState({welcomeMessage: ''})
             this.setState({errormessage: 'email verified'});
+            Auth.currentAuthenticatedUser({
+                bypassCache: true  // Optional, By default is false. If set to true, this call will send a request to Cognito to get the latest user data
+            }).then(user => {
+                console.log(user)
+            })
         }).catch(e => {
             this.setState({errormessage: 'Verification failed'});
         });

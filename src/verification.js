@@ -56,11 +56,11 @@ console.log(param_client_id + " --- " + param_user_name + " --- " + param_confir
 Amplify.configure({
   Auth: {
 
-      identityPoolId: 'us-east-1:1012ad65-49c6-4177-9f2f-b72732b4f66f',
+      identityPoolId: 'us-east-1:8ed96ef1-7bf5-44b5-9f9b-623b245d371c',
       region: 'us-east-1',
       identityPoolRegion: 'us-east-1',
-      userPoolId: 'us-east-1_mVmNNYogf',
-      userPoolWebClientId: '6v0vucgo58ia2k6b4bcakt2va0',
+      userPoolId: 'us-east-1_hdA29vmF5',
+      userPoolWebClientId: '5bsm958ggrhl7fu4dhmn8n39pj',
       mandatorySignIn: false,
       authenticationFlowType: 'USER_PASSWORD_AUTH',
 
