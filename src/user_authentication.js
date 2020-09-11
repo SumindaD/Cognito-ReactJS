@@ -8,21 +8,11 @@ const recaptchaRef = React.createRef();
 Amplify.configure({
     Auth: {
 
-        // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
-        identityPoolId: 'us-east-1:8ed96ef1-7bf5-44b5-9f9b-623b245d371c',
-        
-        // REQUIRED - Amazon Cognito Region
+        identityPoolId: 'us-east-1:0a15a40c-d4ed-4b10-8ca0-908459290f01',
         region: 'us-east-1',
-
-        // OPTIONAL - Amazon Cognito Federated Identity Pool Region 
-        // Required only if it's different from Amazon Cognito Region
         identityPoolRegion: 'us-east-1',
-
-        // OPTIONAL - Amazon Cognito User Pool ID
-        userPoolId: 'us-east-1_hdA29vmF5',
-
-        // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-        userPoolWebClientId: '5bsm958ggrhl7fu4dhmn8n39pj',
+        userPoolId: 'us-east-1_xLy7znUKC',
+        userPoolWebClientId: '28fqk122l6dod9c1boq1utsps6',
 
         // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
         mandatorySignIn: false,
