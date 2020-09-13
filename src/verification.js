@@ -14,44 +14,8 @@ var param_timezone="";
 var param_email="";
 var param_type="";
 
-var query = window.location.search.substring(1);
-console.log(query);
-var vars = query.split("&");
-
-for (var i=0;i<vars.length;i++) {
-  var pair = vars[i].split("=");
-  console.log(pair)
-
-  if(pair[0] == "client_id"){
-    param_client_id = pair[1];
-  }
-  else if(pair[0] == "user_name"){
-    param_user_name = pair[1];
-  }
-  else if(pair[0] == "confirmation_code"){
-    param_confirmation_code = pair[1];
-  }
-  else if(pair[0] == "firstName"){
-    param_firstName = pair[1];  
-  }
-  else if(pair[0] == "lastName"){
-    param_lastName = pair[1];
-  }
-  else if(pair[0] == "staySignIn"){
-    param_staySignIn = pair[1];
-  }
-  else if(pair[0] == "timezone"){
-    param_timezone = pair[1];
-  }
-  else if(pair[0] == "email"){
-    param_email = pair[1];
-  }
-  else if(pair[0] == "type"){
-    param_type = pair[1];
-  }
-}
-
-console.log(param_client_id + " --- " + param_user_name + " --- " + param_confirmation_code + " --- " + param_firstName + " --- " + param_lastName + " --- " + param_staySignIn + " --- " + param_timezone);
+const urlParams = new URLSearchParams(window.location.search);
+const code = urlParams.get('code');
 
 Amplify.configure({
   Auth: {
@@ -62,15 +26,7 @@ Amplify.configure({
       userPoolId: 'us-east-1_xLy7znUKC',
       userPoolWebClientId: '28fqk122l6dod9c1boq1utsps6',
       mandatorySignIn: false,
-      authenticationFlowType: 'USER_PASSWORD_AUTH',
-
-      clientMetadata: {
-        firstName: 'Dilshan',
-        lastName: 'Wijesinghe',
-        staySignIn: 'false',
-        timezone: 'timeZone',
-        //accessCode: param_confirmation_code,
-      },
+      authenticationFlowType: 'USER_PASSWORD_AUTH'
   }
 });
 
@@ -79,71 +35,29 @@ class Verification extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
-      password: '',
-      errormessage: '',
-      signoutVisible: false,
-      welcomeMessage: ''
+      message: ''
     };
   }
 
-  executeVerification(){
-
-    if(param_type == "account_verification"){
-      this.signUpUser();
-    }
-
-    else if(param_type == "email_verification"){
-      this.verifyEmailWithCode();
-    }
-  }
-
-
-  signUpUser(){
-    this.setState({errormessage: ''});
-
-    console.log(param_confirmation_code)
-    Auth.confirmSignUp(
-      param_user_name,
-      param_confirmation_code
-    )
-    .then(data => {
-        console.log(data)
-
-    })
-    .catch(err => {
-        console.log(err)
-        this.setState({errormessage: err.message});
-    });
-  }
-
-//   verifyEmail(){
-//     Auth.verifyCurrentUserAttribute('email')
-//     .then(() => {
-//         this.verifyEmailWithCode()
-//     }).catch((err) => {
-//       console.log(err);
-//     });
-// }
-
   verifyEmailWithCode(){
-    console.log(param_confirmation_code)
-    Auth.verifyCurrentUserAttributeSubmit('email', param_confirmation_code)
+    Auth.verifyCurrentUserAttributeSubmit('email', code)
     .then(() => {
-      console.log('Email verified');
+      this.setState({message: 'Email Verified!'})
     }).catch(e => {
-      console.log(e);
+      this.setState({message: e.message})
     });
+  }
 
+  componentDidMount() {
+    window.addEventListener('load', this.verifyEmailWithCode.bind(this));
   }
 
   render(){
     return(
       <div>
-      {!this.state.signoutVisible ? <button onClick={this.executeVerification.bind(this)}>Validate</button> : null}
+        {this.state.message}
       </div>
-      );
+    );
   }
 }
 export default Verification;
-

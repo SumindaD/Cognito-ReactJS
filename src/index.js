@@ -9,6 +9,6 @@ import Verification from './verification.js';
 ReactDOM.render((
     <BrowserRouter>
             <Route exact path='/' component={CognitoLogin}/>
-            <Route exact path='/verification' component={Verification}/>
+            <Route exact path='/email-verification' component={Verification}/>
     </BrowserRouter> 
  ), document.getElementById('root'))
