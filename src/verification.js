@@ -16,17 +16,23 @@ var param_type="";
 
 const urlParams = new URLSearchParams(window.location.search);
 const code = urlParams.get('code');
+const username = urlParams.get('username');
+const hasura_id = urlParams.get('hasura_id');
 
 Amplify.configure({
   Auth: {
 
-      identityPoolId: 'us-east-1:0a15a40c-d4ed-4b10-8ca0-908459290f01',
-      region: 'us-east-1',
-      identityPoolRegion: 'us-east-1',
-      userPoolId: 'us-east-1_xLy7znUKC',
-      userPoolWebClientId: '28fqk122l6dod9c1boq1utsps6',
+      identityPoolId: 'us-west-2:cc37a222-0c55-4797-999a-4eb7874168d1',
+      region: 'us-west-2',
+      identityPoolRegion: 'us-west-2',
+      userPoolId: 'us-west-2_rPQE7thyI',
+      userPoolWebClientId: '6ajlnb2ph4obsa5jo94fqbqqlj',
       mandatorySignIn: false,
-      authenticationFlowType: 'USER_PASSWORD_AUTH'
+      authenticationFlowType: 'USER_PASSWORD_AUTH',
+      clientMetadata: {
+            user_role: "enduser",
+            hasura_id: hasura_id
+        }
   }
 });
 
@@ -40,12 +46,21 @@ class Verification extends React.Component {
   }
 
   verifyEmailWithCode(){
-    Auth.verifyCurrentUserAttributeSubmit('email', code)
-    .then(() => {
-      this.setState({message: 'Email Verified!'})
-    }).catch(e => {
-      this.setState({message: e.message})
-    });
+    //Auth.verifyCurrentUserAttributeSubmit('email', code)
+    Auth.confirmSignUp(username, code, {
+      // Optional. Force user confirmation irrespective of existing alias. By default set to True.
+      forceAliasCreation: true
+  }).then(data => {
+      console.log(data)
+      this.setState({ message: '' });
+      this.setState({ welcomeMessage: 'Confirmed ' + username + '! Please log in again.' })
+  })
+      .catch(err => {
+          console.log(err)
+          this.setState({ message: err.message });
+      });
+
+
   }
 
   componentDidMount() {
